@@ -3,237 +3,111 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OPIC Gemini Pro — Luyện thi thông minh</title>
+    <title>OPIC Gemini Pro — Sửa Lỗi JSON</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
     <style>
         :root {
             --bg: #0d0f14; --surface: #161923; --surface2: #1e2330;
-            --border: #2a3040; --accent: #38bdf8; --accent2: #818cf8;
-            --text: #e8ecf4; --text2: #8a95ad; --danger: #f87171;
+            --border: #2a3040; --accent: #38bdf8; --text: #e8ecf4; --text2: #8a95ad;
             --korean: 'Noto Sans KR', sans-serif; --viet: 'Be Vietnam Pro', sans-serif;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: var(--viet); min-height: 100vh; line-height: 1.6; }
-        header {
-            background: rgba(13, 15, 20, 0.95); border-bottom: 1px solid var(--border);
-            padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px);
-        }
-        .logo-badge { background: #38bdf8; border-radius: 6px; padding: 4px 10px; font-weight: 700; color: #000; font-size: 14px; }
-        nav { display: flex; gap: 5px; }
-        .nav-btn { background: none; border: none; color: var(--text2); padding: 8px 12px; cursor: pointer; border-radius: 6px; font-size: 13px; transition: 0.3s; font-family: var(--viet); }
-        .nav-btn.active { color: var(--accent); background: rgba(56, 189, 248, 0.1); font-weight: 600; }
-        main { max-width: 800px; margin: 0 auto; padding: 25px 15px; }
-        .section { display: none; }
-        .section.visible { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .input-card { background: var(--surface); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 15px; }
-        .input-textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; font-family: var(--korean); margin-top: 8px; margin-bottom: 12px; outline: none; transition: 0.2s; }
-        .input-textarea:focus { border-color: var(--accent); }
-        .btn-primary { background: var(--accent); color: #000; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; transition: 0.3s; font-family: var(--viet); letter-spacing: 0.5px; }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .flash-card { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; text-align: center; transition: 0.3s; }
-        .flash-card:hover { border-color: var(--accent2); transform: translateY(-3px); }
-        .grammar-block { background: var(--surface); border-left: 4px solid var(--accent); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .record-btn { width: 70px; height: 70px; border-radius: 50%; border: none; background: var(--danger); color: white; font-size: 28px; cursor: pointer; display: block; margin: 0 auto; transition: 0.3s; }
-        .record-btn.recording { animation: pulse 1s infinite; background: #ff0000; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(248,113,113,0.7); } 70% { box-shadow: 0 0 0 15px rgba(248,113,113,0); } 100% { box-shadow: 0 0 0 0 rgba(248,113,113,0); } }
-        .score-card { background: var(--surface2); padding: 20px; border-radius: 12px; margin-top: 20px; display: none; border: 1px solid var(--border); }
-        .status-msg { text-align: center; margin-top: 15px; font-size: 14px; color: var(--accent); font-weight: 500; }
+        body { background: var(--bg); color: var(--text); font-family: var(--viet); min-height: 100vh; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 25px; border-radius: 15px; border: 1px solid var(--border); }
+        h2 { margin-bottom: 20px; color: var(--accent); text-align: center; }
+        label { display: block; font-size: 12px; margin-bottom: 8px; color: var(--text2); font-weight: bold; }
+        input, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 15px; outline: none; font-family: inherit; }
+        button { width: 100%; background: var(--accent); color: #000; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:disabled { opacity: 0.5; }
+        #result-box { margin-top: 20px; padding: 15px; background: #1e293b; border-radius: 8px; display: none; border-left: 4px solid var(--accent); }
+        .error-log { color: #f87171; font-size: 13px; margin-top: 10px; font-family: monospace; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">
-        <span class="logo-badge">GEMINI</span>
-        <span style="font-size: 14px; font-weight: bold; margin-left: 8px;">OPIc Pro AI</span>
-    </div>
-    <nav>
-        <button class="nav-btn active" id="nav-input" onclick="goSection('input')">Nhập liệu</button>
-        <button class="nav-btn" id="nav-vocab" onclick="goSection('vocab')">Học tập</button>
-        <button class="nav-btn" id="nav-test" onclick="goSection('test')">Thi thử</button>
-    </nav>
-</header>
+<div class="container">
+    <h2>🇰🇷 OPIC AI Trainer</h2>
+    
+    <label>GOOGLE GEMINI API KEY</label>
+    <input type="password" id="api-key" placeholder="Dán API Key của bạn vào đây...">
 
-<main>
-    <!-- PHẦN 1: NHẬP LIỆU -->
-    <div id="sec-input" class="section visible">
-        <div class="input-card">
-            <label style="font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase;">1. Google Gemini API Key</label>
-            <input type="password" id="api-key" class="input-textarea" placeholder="Dán API Key từ Google AI Studio vào đây...">
-            
-            <label style="font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase;">2. Câu hỏi OPIc (Tiếng Hàn)</label>
-            <textarea id="inp-question" class="input-textarea" rows="2" placeholder="Ví dụ: 자기소개를 해보세요."></textarea>
-            
-            <label style="font-size: 11px; color: var(--accent); font-weight: bold; text-transform: uppercase;">3. Câu trả lời của bạn</label>
-            <textarea id="inp-answer" class="input-textarea" rows="6" placeholder="Nhập đoạn văn tiếng Hàn bạn đã chuẩn bị..."></textarea>
-            
-            <button class="btn-primary" id="btn-process" onclick="processWithGemini()">⚡ PHÂN TÍCH & TẠO BÀI HỌC</button>
-        </div>
-    </div>
+    <label>CÂU HỎI TIẾNG HÀN</label>
+    <textarea id="inp-question" rows="2" placeholder="Ví dụ: 자기소개를 해보세요."></textarea>
 
-    <!-- PHẦN 2: TỪ VỰNG & NGỮ PHÁP -->
-    <div id="sec-vocab" class="section">
-        <h3 style="margin-bottom:20px; border-left: 4px solid var(--accent2); padding-left: 10px;">🃏 Từ vựng cần nhớ</h3>
-        <div class="cards-grid" id="vocab-container" style="margin-bottom: 30px;"></div>
-        
-        <h3 style="margin-bottom:20px; border-left: 4px solid var(--accent); padding-left: 10px;">📐 Cấu trúc ngữ pháp</h3>
-        <div id="grammar-container"></div>
-    </div>
+    <label>CÂU TRẢ LỜI CỦA BẠN</label>
+    <textarea id="inp-answer" rows="5" placeholder="Nhập bài nói của bạn..."></textarea>
 
-    <!-- PHẦN 3: THI THỬ -->
-    <div id="sec-test" class="section">
-        <div class="input-card" style="text-align:center;">
-            <p style="color: var(--text2); font-size: 12px; margin-bottom: 10px;">CÂU HỎI LUYỆN TẬP:</p>
-            <div id="test-q" style="font-size: 20px; margin-bottom: 30px; font-family: var(--korean); color: var(--accent);">Đang chờ dữ liệu phân tích...</div>
-            
-            <button class="record-btn" id="record-btn" onclick="toggleRecord()">🎤</button>
-            <div id="rec-status" class="status-msg">Nhấn biểu tượng Mic để bắt đầu nói</div>
-            
-            <div class="score-card" id="score-card"></div>
-        </div>
+    <button id="btn-run" onclick="startAnalysis()">PHÂN TÍCH NGAY</button>
+    
+    <div id="result-box">
+        <h4 style="margin-bottom: 10px;">Kết quả phân tích:</h4>
+        <div id="output-content"></div>
     </div>
-</main>
+    <div id="error-display" class="error-log"></div>
+</div>
 
 <script>
-    let state = { vocab: [], grammar: [], questions: [], transcript: '', isRecording: false };
-
-    function goSection(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        
-        document.getElementById('sec-' + id).classList.add('visible');
-        document.getElementById('nav-' + id).classList.add('active');
-    }
-
-    function safeJsonParse(str) {
-        try {
-            // Xóa sạch các ký tự lạ và khối code ```json
-            const cleanText = str.replace(/```json/g, "").replace(/```/g, "").trim();
-            return JSON.parse(cleanText);
-        } catch (e) {
-            console.error("Lỗi parse JSON. Nội dung gốc từ AI:", str);
-            return null;
-        }
-    }
-
-    async function processWithGemini() {
+    async function startAnalysis() {
         const key = document.getElementById('api-key').value.trim();
         const ans = document.getElementById('inp-answer').value.trim();
         const que = document.getElementById('inp-question').value.trim();
-        
-        if(!key) return alert("Vui lòng nhập API Key!");
-        if(!ans) return alert("Vui lòng nhập câu trả lời!");
+        const btn = document.getElementById('btn-run');
+        const errDisp = document.getElementById('error-display');
+        const resBox = document.getElementById('result-box');
 
-        const btn = document.getElementById('btn-process');
-        btn.disabled = true; btn.innerText = "⏳ ĐANG PHÂN TÍCH...";
+        if (!key || !ans) return alert("Vui lòng nhập đầy đủ Key và Câu trả lời!");
 
-        const prompt = `Bạn là chuyên gia luyện thi OPIc trình độ IM. Hãy phân tích bài nói: "${ans}" cho câu hỏi "${que}".
-        Trả về JSON thuần túy (không giải thích thêm):
-        {
-            "vocab": [{"word": "từ vựng", "mean": "nghĩa tiếng Việt"}],
-            "grammar": [{"sentence": "câu ví dụ", "note": "giải thích ngữ pháp"}],
-            "mocks": ["câu hỏi thực tế 1", "câu hỏi thực tế 2"]
-        }`;
+        btn.disabled = true;
+        btn.innerText = "⏳ Đang kết nối Gemini...";
+        errDisp.innerText = "";
+        resBox.style.display = "none";
+
+        const prompt = `Phân tích câu trả lời tiếng Hàn: "${ans}" cho câu hỏi "${que}". Trả về JSON: {"feedback": "nhận xét tiếng Việt", "score": 80}`;
 
         try {
-            const resp = await fetch(`[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){key}`, {
+            // Sử dụng endpoint chuẩn và mới nhất của Gemini 1.5 Flash
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+            
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: "application/json" } 
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
                 })
             });
+
+            // KIỂM TRA PHẢN HỒI: Nếu không phải JSON, fetch sẽ ném lỗi ở đây
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Google API báo lỗi (${response.status}): ${errorText}`);
+            }
+
+            const data = await response.json();
             
-            const data = await resp.json();
-            if(data.error) throw new Error(data.error.message);
+            // Bóc tách dữ liệu từ cấu trúc của Gemini
+            if (data.candidates && data.candidates[0].content.parts[0].text) {
+                const aiText = data.candidates[0].content.parts[0].text;
+                const result = JSON.parse(aiText);
+                
+                resBox.style.display = "block";
+                document.getElementById('output-content').innerHTML = `
+                    <p><b>Điểm số:</b> ${result.score}/100</p>
+                    <p><b>Nhận xét:</b> ${result.feedback}</p>
+                `;
+            }
 
-            const text = data.candidates[0].content.parts[0].text;
-            const parsed = safeJsonParse(text);
-            
-            if(!parsed) throw new Error("Dữ liệu AI trả về không hợp lệ.");
-
-            state.vocab = parsed.vocab || [];
-            state.grammar = parsed.grammar || [];
-            state.questions = parsed.mocks || [];
-
-            renderData();
-            goSection('vocab');
         } catch (e) {
-            alert("LỖI: " + e.message);
+            console.error(e);
+            errDisp.innerHTML = `<b>Lỗi hệ thống:</b><br>${e.message}<br><br><i>Gợi ý: Hãy kiểm tra lại API Key hoặc đảm bảo bạn đã bật "Gemini API" trong Google Cloud Console.</i>`;
         } finally {
-            btn.disabled = false; btn.innerText = "⚡ PHÂN TÍCH & TẠO BÀI HỌC";
+            btn.disabled = false;
+            btn.innerText = "PHÂN TÍCH NGAY";
         }
-    }
-
-    function renderData() {
-        document.getElementById('vocab-container').innerHTML = state.vocab.map(v => 
-            `<div class="flash-card"><b>${v.word}</b><br><small style="color:var(--text2)">${v.mean}</small></div>`
-        ).join('');
-        
-        document.getElementById('grammar-container').innerHTML = state.grammar.map(g => 
-            `<div class="grammar-block"><b>${g.sentence}</b><br><small style="color:var(--text2)">${g.note}</small></div>`
-        ).join('');
-        
-        document.getElementById('test-q').innerText = state.questions[0] || "준비된 질문이 없습니다.";
-    }
-
-    function toggleRecord() {
-        const Speech = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if(!Speech) return alert("Trình duyệt không hỗ trợ ghi âm. Hãy dùng Chrome!");
-
-        if(!state.isRecording) {
-            const rec = new Speech();
-            rec.lang = 'ko-KR';
-            rec.onstart = () => { 
-                state.isRecording = true; 
-                document.getElementById('record-btn').classList.add('recording');
-                document.getElementById('rec-status').innerText = "🔴 Đang nghe... Hãy trả lời bằng tiếng Hàn";
-            };
-            rec.onresult = (e) => { state.transcript = e.results[0][0].transcript; };
-            rec.onend = () => { 
-                state.isRecording = false; 
-                document.getElementById('record-btn').classList.remove('recording');
-                if(state.transcript) {
-                    document.getElementById('rec-status').innerText = "Đã nhận diện: " + state.transcript;
-                    gradeWithGemini();
-                } else {
-                    document.getElementById('rec-status').innerText = "Không nghe thấy gì, hãy thử lại!";
-                }
-            };
-            rec.start();
-        }
-    }
-
-    async function gradeWithGemini() {
-        const key = document.getElementById('api-key').value.trim();
-        const status = document.getElementById('rec-status');
-        status.innerText = "⏳ Jiwon đang chấm điểm bài nói...";
-        
-        const prompt = `Câu hỏi: ${document.getElementById('test-q').innerText}. Học viên nói: ${state.transcript}. 
-        Chấm điểm OPIc (0-100) và nhận xét ngắn gọn tiếng Việt. Trả về JSON: {"score": 85, "feedback": "..."}`;
-
-        try {
-            const resp = await fetch(`[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$){key}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: "application/json" }
-                })
-            });
-            const data = await resp.json();
-            const result = safeJsonParse(data.candidates[0].content.parts[0].text);
-            
-            const card = document.getElementById('score-card');
-            card.style.display = 'block';
-            card.innerHTML = `<h3 style="color:var(--accent)">Điểm số: ${result.score}/100</h3><p style="font-size:14px; margin-top:10px;">${result.feedback}</p>`;
-            status.innerText = "✅ Chấm điểm hoàn tất!";
-        } catch(e) { console.error(e); status.innerText = "Lỗi chấm điểm!"; }
     }
 </script>
+
 </body>
 </html>
