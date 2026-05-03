@@ -3,108 +3,95 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OPIC Gemini Pro — Sửa Lỗi JSON</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <title>OPIC Pro AI - Fixed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #0d0f14; --surface: #161923; --surface2: #1e2330;
-            --border: #2a3040; --accent: #38bdf8; --text: #e8ecf4; --text2: #8a95ad;
-            --korean: 'Noto Sans KR', sans-serif; --viet: 'Be Vietnam Pro', sans-serif;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: var(--text); font-family: var(--viet); min-height: 100vh; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: var(--surface); padding: 25px; border-radius: 15px; border: 1px solid var(--border); }
-        h2 { margin-bottom: 20px; color: var(--accent); text-align: center; }
-        label { display: block; font-size: 12px; margin-bottom: 8px; color: var(--text2); font-weight: bold; }
-        input, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 15px; outline: none; font-family: inherit; }
-        button { width: 100%; background: var(--accent); color: #000; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:disabled { opacity: 0.5; }
-        #result-box { margin-top: 20px; padding: 15px; background: #1e293b; border-radius: 8px; display: none; border-left: 4px solid var(--accent); }
-        .error-log { color: #f87171; font-size: 13px; margin-top: 10px; font-family: monospace; }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; --text: #f1f5f9; }
+        body { background: var(--bg); color: var(--text); font-family: 'Be Vietnam Pro', sans-serif; padding: 20px; }
+        .app-container { max-width: 600px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        h1 { color: var(--accent); text-align: center; margin-bottom: 25px; font-size: 24px; }
+        label { display: block; font-size: 13px; margin-bottom: 8px; color: var(--accent); font-weight: bold; }
+        input, textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-family: inherit; }
+        button { width: 100%; background: var(--accent); color: #0f172a; border: none; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        button:disabled { background: #64748b; cursor: not-allowed; }
+        #log { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; background: #000; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+        .success { color: #4ade80; border: 1px solid #4ade80; }
+        .error { color: #f87171; border: 1px solid #f87171; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>🇰🇷 OPIC AI Trainer</h2>
+<div class="app-container">
+    <h1>🇰🇷 OPIC AI TRAINER</h1>
     
-    <label>GOOGLE GEMINI API KEY</label>
-    <input type="password" id="api-key" placeholder="Dán API Key của bạn vào đây...">
+    <label>GOOGLE API KEY</label>
+    <input type="password" id="api-key" placeholder="Dán key bắt đầu bằng AIza...">
 
-    <label>CÂU HỎI TIẾNG HÀN</label>
-    <textarea id="inp-question" rows="2" placeholder="Ví dụ: 자기소개를 해보세요."></textarea>
+    <label>CÂU HỎI (TIẾNG HÀN)</label>
+    <input type="text" id="inp-q" placeholder="Ví dụ: 자기소개를 하세요.">
 
     <label>CÂU TRẢ LỜI CỦA BẠN</label>
-    <textarea id="inp-answer" rows="5" placeholder="Nhập bài nói của bạn..."></textarea>
+    <textarea id="inp-a" rows="5" placeholder="Nhập bài nói của bạn..."></textarea>
 
-    <button id="btn-run" onclick="startAnalysis()">PHÂN TÍCH NGAY</button>
+    <button id="run-btn" onclick="analyze()">PHÂN TÍCH BÀI NÓI</button>
     
-    <div id="result-box">
-        <h4 style="margin-bottom: 10px;">Kết quả phân tích:</h4>
-        <div id="output-content"></div>
-    </div>
-    <div id="error-display" class="error-log"></div>
+    <div id="log"></div>
 </div>
 
 <script>
-    async function startAnalysis() {
+    async function analyze() {
         const key = document.getElementById('api-key').value.trim();
-        const ans = document.getElementById('inp-answer').value.trim();
-        const que = document.getElementById('inp-question').value.trim();
-        const btn = document.getElementById('btn-run');
-        const errDisp = document.getElementById('error-display');
-        const resBox = document.getElementById('result-box');
+        const ans = document.getElementById('inp-a').value.trim();
+        const que = document.getElementById('inp-q').value.trim();
+        const btn = document.getElementById('run-btn');
+        const log = document.getElementById('log');
 
-        if (!key || !ans) return alert("Vui lòng nhập đầy đủ Key và Câu trả lời!");
+        if (!key || !ans) { alert("Thiếu thông tin!"); return; }
 
         btn.disabled = true;
-        btn.innerText = "⏳ Đang kết nối Gemini...";
-        errDisp.innerText = "";
-        resBox.style.display = "none";
+        btn.innerText = "⏳ Đang xử lý...";
+        log.style.display = "block";
+        log.className = "";
+        log.innerText = "Đang gửi yêu cầu đến Google...";
 
-        const prompt = `Phân tích câu trả lời tiếng Hàn: "${ans}" cho câu hỏi "${que}". Trả về JSON: {"feedback": "nhận xét tiếng Việt", "score": 80}`;
+        // Prompt ép AI trả về JSON sạch
+        const promptText = `Bạn là giám khảo OPIc. Hãy chấm điểm bài nói tiếng Hàn: "${ans}" cho câu hỏi "${que}". 
+        Hãy trả về kết quả duy nhất ở định dạng JSON như sau: {"score": 85, "feedback": "nhận xét ngắn gọn bằng tiếng Việt"}`;
 
         try {
-            // Sử dụng endpoint chuẩn và mới nhất của Gemini 1.5 Flash
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
             
             const response = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
+                    contents: [{ parts: [{ text: promptText }] }]
                 })
             });
 
-            // KIỂM TRA PHẢN HỒI: Nếu không phải JSON, fetch sẽ ném lỗi ở đây
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Google API báo lỗi (${response.status}): ${errorText}`);
+            const data = await response.json();
+
+            // Kiểm tra lỗi từ phía Google
+            if (data.error) {
+                throw new Error(`Lỗi Google: ${data.error.message}`);
             }
 
-            const data = await response.json();
+            // Lấy text và làm sạch các ký tự markdown (```json ...)
+            let rawAiText = data.candidates[0].content.parts[0].text;
+            let cleanJson = rawAiText.replace(/```json|```/g, "").trim();
             
-            // Bóc tách dữ liệu từ cấu trúc của Gemini
-            if (data.candidates && data.candidates[0].content.parts[0].text) {
-                const aiText = data.candidates[0].content.parts[0].text;
-                const result = JSON.parse(aiText);
-                
-                resBox.style.display = "block";
-                document.getElementById('output-content').innerHTML = `
-                    <p><b>Điểm số:</b> ${result.score}/100</p>
-                    <p><b>Nhận xét:</b> ${result.feedback}</p>
-                `;
-            }
+            const result = JSON.parse(cleanJson);
+            
+            log.className = "success";
+            log.innerHTML = `✅ <b>KẾT QUẢ:</b><br><br><b>Điểm:</b> ${result.score}/100<br><b>Nhận xét:</b> ${result.feedback}`;
 
         } catch (e) {
+            log.className = "error";
+            log.innerText = "❌ LỖI HỆ THỐNG:\n" + e.message + "\n\nGiải pháp: Kiểm tra lại API Key hoặc dán lại bài nói.";
             console.error(e);
-            errDisp.innerHTML = `<b>Lỗi hệ thống:</b><br>${e.message}<br><br><i>Gợi ý: Hãy kiểm tra lại API Key hoặc đảm bảo bạn đã bật "Gemini API" trong Google Cloud Console.</i>`;
         } finally {
             btn.disabled = false;
-            btn.innerText = "PHÂN TÍCH NGAY";
+            btn.innerText = "PHÂN TÍCH BÀI NÓI";
         }
     }
 </script>
